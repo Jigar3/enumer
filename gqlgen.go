@@ -1,6 +1,7 @@
 package main
 
 // Arguments to format are:
+//
 //	[1]: type name
 const gqlgenMethods = `
 // MarshalGQL implements the graphql.Marshaler interface for %[1]s
@@ -22,5 +23,5 @@ func (i *%[1]s) UnmarshalGQL(value interface{}) error {
 `
 
 func (g *Generator) buildGQLGenMethods(runs [][]Value, typeName string) {
-	g.Printf(gqlgenMethods, typeName)
+	g.Printf(ENUMER, gqlgenMethods, typeName)
 }

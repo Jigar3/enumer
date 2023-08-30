@@ -1,6 +1,7 @@
 package main
 
 // Arguments to format are:
+//
 //	[1]: type name
 const valueMethod = `func (i %[1]s) Value() (driver.Value, error) {
 	return i.String(), nil
@@ -35,8 +36,8 @@ const scanMethod = `func (i *%[1]s) Scan(value interface{}) error {
 `
 
 func (g *Generator) addValueAndScanMethod(typeName string) {
-	g.Printf("\n")
-	g.Printf(valueMethod, typeName)
-	g.Printf("\n\n")
-	g.Printf(scanMethod, typeName)
+	g.Printf(ENUMER, "\n")
+	g.Printf(ENUMER, valueMethod, typeName)
+	g.Printf(ENUMER, "\n\n")
+	g.Printf(ENUMER, scanMethod, typeName)
 }

@@ -3,6 +3,7 @@ package main
 import "fmt"
 
 // Arguments to format are:
+//
 //	[1]: type name
 const stringNameToValueMethod = `// %[1]sString retrieves an enum value from the enum constants string name.
 // Throws an error if the param is not part of the enum.
@@ -19,6 +20,7 @@ func %[1]sString(s string) (%[1]s, error) {
 `
 
 // Arguments to format are:
+//
 //	[1]: type name
 const stringValuesMethod = `// %[1]sValues returns all values of the enum
 func %[1]sValues() []%[1]s {
@@ -27,6 +29,7 @@ func %[1]sValues() []%[1]s {
 `
 
 // Arguments to format are:
+//
 //	[1]: type name
 const stringsMethod = `// %[1]sStrings returns a slice of all String values of the enum
 func %[1]sStrings() []string {
@@ -37,6 +40,7 @@ func %[1]sStrings() []string {
 `
 
 // Arguments to format are:
+//
 //	[1]: type name
 const stringBelongsMethodLoop = `// IsA%[1]s returns "true" if the value is listed in the enum definition. "false" otherwise
 func (i %[1]s) IsA%[1]s() bool {
@@ -50,6 +54,7 @@ func (i %[1]s) IsA%[1]s() bool {
 `
 
 // Arguments to format are:
+//
 //	[1]: type name
 const stringBelongsMethodSet = `// IsA%[1]s returns "true" if the value is listed in the enum definition. "false" otherwise
 func (i %[1]s) IsA%[1]s() bool {
@@ -59,6 +64,7 @@ func (i %[1]s) IsA%[1]s() bool {
 `
 
 // Arguments to format are:
+//
 //	[1]: type name
 const altStringValuesMethod = `func (%[1]s) Values() []string {
 	return %[1]sStrings()
@@ -66,21 +72,21 @@ const altStringValuesMethod = `func (%[1]s) Values() []string {
 `
 
 func (g *Generator) buildAltStringValuesMethod(typeName string) {
-	g.Printf("\n")
-	g.Printf(altStringValuesMethod, typeName)
+	g.Printf(ENUMER, "\n")
+	g.Printf(ENUMER, altStringValuesMethod, typeName)
 }
 
 func (g *Generator) buildBasicExtras(runs [][]Value, typeName string, runsThreshold int) {
 	// At this moment, either "g.declareIndexAndNameVars()" or "g.declareNameVars()" has been called
 
 	// Print the slice of values
-	g.Printf("\nvar _%sValues = []%s{", typeName, typeName)
+	g.Printf(ENUMER, "\nvar _%sValues = []%s{", typeName, typeName)
 	for _, values := range runs {
 		for _, value := range values {
-			g.Printf("\t%s, ", value.originalName)
+			g.Printf(ENUMER, "\t%s, ", value.originalName)
 		}
 	}
-	g.Printf("}\n\n")
+	g.Printf(ENUMER, "}\n\n")
 
 	// Print the map between name and value
 	g.printValueMap(runs, typeName, runsThreshold)
@@ -89,19 +95,19 @@ func (g *Generator) buildBasicExtras(runs [][]Value, typeName string, runsThresh
 	g.printNamesSlice(runs, typeName, runsThreshold)
 
 	// Print the basic extra methods
-	g.Printf(stringNameToValueMethod, typeName)
-	g.Printf(stringValuesMethod, typeName)
-	g.Printf(stringsMethod, typeName)
+	g.Printf(ENUMER, stringNameToValueMethod, typeName)
+	g.Printf(ENUMER, stringValuesMethod, typeName)
+	g.Printf(ENUMER, stringsMethod, typeName)
 	if len(runs) <= runsThreshold {
-		g.Printf(stringBelongsMethodLoop, typeName)
+		g.Printf(ENUMER, stringBelongsMethodLoop, typeName)
 	} else { // There is a map of values, the code is simpler then
-		g.Printf(stringBelongsMethodSet, typeName)
+		g.Printf(ENUMER, stringBelongsMethodSet, typeName)
 	}
 }
 
 func (g *Generator) printValueMap(runs [][]Value, typeName string, runsThreshold int) {
 	thereAreRuns := len(runs) > 1 && len(runs) <= runsThreshold
-	g.Printf("\nvar _%sNameToValueMap = map[string]%s{\n", typeName, typeName)
+	g.Printf(ENUMER, "\nvar _%sNameToValueMap = map[string]%s{\n", typeName, typeName)
 
 	var n int
 	var runID string
@@ -114,16 +120,16 @@ func (g *Generator) printValueMap(runs [][]Value, typeName string, runsThreshold
 		}
 
 		for _, value := range values {
-			g.Printf("\t_%sName%s[%d:%d]: %s,\n", typeName, runID, n, n+len(value.name), value.originalName)
-			g.Printf("\t_%sLowerName%s[%d:%d]: %s,\n", typeName, runID, n, n+len(value.name), value.originalName)
+			g.Printf(ENUMER, "\t_%sName%s[%d:%d]: %s,\n", typeName, runID, n, n+len(value.name), value.originalName)
+			g.Printf(ENUMER, "\t_%sLowerName%s[%d:%d]: %s,\n", typeName, runID, n, n+len(value.name), value.originalName)
 			n += len(value.name)
 		}
 	}
-	g.Printf("}\n\n")
+	g.Printf(ENUMER, "}\n\n")
 }
 func (g *Generator) printNamesSlice(runs [][]Value, typeName string, runsThreshold int) {
 	thereAreRuns := len(runs) > 1 && len(runs) <= runsThreshold
-	g.Printf("\nvar _%sNames = []string{\n", typeName)
+	g.Printf(ENUMER, "\nvar _%sNames = []string{\n", typeName)
 
 	var n int
 	var runID string
@@ -136,14 +142,15 @@ func (g *Generator) printNamesSlice(runs [][]Value, typeName string, runsThresho
 		}
 
 		for _, value := range values {
-			g.Printf("\t_%sName%s[%d:%d],\n", typeName, runID, n, n+len(value.name))
+			g.Printf(ENUMER, "\t_%sName%s[%d:%d],\n", typeName, runID, n, n+len(value.name))
 			n += len(value.name)
 		}
 	}
-	g.Printf("}\n\n")
+	g.Printf(ENUMER, "}\n\n")
 }
 
 // Arguments to format are:
+//
 //	[1]: type name
 const jsonMethods = `
 // MarshalJSON implements the json.Marshaler interface for %[1]s
@@ -165,10 +172,11 @@ func (i *%[1]s) UnmarshalJSON(data []byte) error {
 `
 
 func (g *Generator) buildJSONMethods(runs [][]Value, typeName string, runsThreshold int) {
-	g.Printf(jsonMethods, typeName)
+	g.Printf(ENUMER, jsonMethods, typeName)
 }
 
 // Arguments to format are:
+//
 //	[1]: type name
 const textMethods = `
 // MarshalText implements the encoding.TextMarshaler interface for %[1]s
@@ -185,10 +193,11 @@ func (i *%[1]s) UnmarshalText(text []byte) error {
 `
 
 func (g *Generator) buildTextMethods(runs [][]Value, typeName string, runsThreshold int) {
-	g.Printf(textMethods, typeName)
+	g.Printf(ENUMER, textMethods, typeName)
 }
 
 // Arguments to format are:
+//
 //	[1]: type name
 const yamlMethods = `
 // MarshalYAML implements a YAML Marshaler for %[1]s
@@ -210,5 +219,5 @@ func (i *%[1]s) UnmarshalYAML(unmarshal func(interface{}) error) error {
 `
 
 func (g *Generator) buildYAMLMethods(runs [][]Value, typeName string, runsThreshold int) {
-	g.Printf(yamlMethods, typeName)
+	g.Printf(ENUMER, yamlMethods, typeName)
 }

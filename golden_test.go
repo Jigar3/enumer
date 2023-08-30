@@ -383,7 +383,7 @@ func runGoldenTest(t *testing.T, test Golden,
 		t.Fatalf("%s: need type declaration on first line", test.name)
 	}
 	g.generate(tokens[1], generateJSON, generateYAML, generateSQL, generateText, generateGQLGen, "noop", trimPrefix, prefix, linecomment, generateValuesMethod)
-	got := string(g.format())
+	got := string(g.format(ENUMER))
 	if got != loadGolden(test.name) {
 		// Use this to help build a golden text when changes are needed
 		//goldenFile := fmt.Sprintf("./testdata/%v.golden", test.name)
